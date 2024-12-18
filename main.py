@@ -35,6 +35,9 @@ from douyinliverecorder import utils
 from msg_push import (
     dingtalk, xizhi, tg_bot, send_email, bark, ntfy
 )
+from flask import Flask, jsonify
+
+
 
 version = "v4.0.2"
 platforms = ("\n国内站点：抖音|快手|虎牙|斗鱼|YY|B站|小红书|bigo|blued|网易CC|千度热播|猫耳FM|Look|TwitCasting|百度|微博|"
@@ -1512,6 +1515,51 @@ os.makedirs(os.path.dirname(config_file), exist_ok=True)
 t3 = threading.Thread(target=backup_file_start, args=(), daemon=True)
 t3.start()
 utils.remove_duplicate_lines(url_config_file)
+
+app = Flask(__name__)
+
+
+@app.route("/display_recording")
+def display_recording():
+    # 去重录制列表
+    unique_recordings = list(set(recording))
+
+    # 获取当前时间
+    current_time = datetime.datetime.now()
+
+    # 存储所有录制信息的列表
+    recordings_info = []
+
+    # 遍历每个唯一的直播
+    for live_stream in unique_recordings:
+        start_time, quality_attribute = recording_time_list[live_stream]
+
+        # 计算已录制的时间
+        recorded_duration = current_time - start_time
+
+        # 格式化时间字符串
+        formatted_duration = str(recorded_duration).split(".")[0]
+
+        # 构建单条录制信息的字典
+        recording_info = {
+            "stream": live_stream,
+            "quality_attribute": quality_attribute,
+            "duration": formatted_duration,
+        }
+
+        # 添加到总列表中
+        recordings_info.append(recording_info)
+
+    # 返回 JSON 格式的录制信息
+    return jsonify({"recordings": recordings_info})
+
+
+def run_flask():
+    app.run(host="0.0.0.0", port=3000)
+
+    # 创建并启动Flask应用程序的线程
+flask_thread = threading.Thread(target=run_flask)
+flask_thread.start()
 
 
 def read_config_value(config_parser: configparser.RawConfigParser, section: str, option: str, default_value: Any) \
