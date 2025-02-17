@@ -15,11 +15,12 @@ import zipfile
 from pathlib import Path
 import requests
 from tqdm import tqdm
-from douyinliverecorder.logger import logger
+from streamget.logger import logger
 
 current_platform = platform.system()
 execute_dir = os.path.split(os.path.realpath(sys.argv[0]))[0]
 current_env_path = os.environ.get('PATH')
+ffmpeg_path = os.path.join(execute_dir, 'ffmpeg')
 
 
 def unzip_file(zip_path: str | Path, extract_to: str | Path, delete: bool = True) -> None:
@@ -62,11 +63,11 @@ def get_lanzou_download_link(url: str, password: str | None = None) -> str | Non
 def install_ffmpeg_windows():
     try:
         logger.warning("ffmpeg is not installed.")
-        logger.debug("Installing the stable version of ffmpeg for Windows...")
-        ffmpeg_url = get_lanzou_download_link('https://wweb.lanzouv.com/in54b2gmj24b', 'e3ut')
+        logger.debug("Installing the latest version of ffmpeg for Windows...")
+        ffmpeg_url = get_lanzou_download_link('https://wweb.lanzouv.com/iHAc22ly3r3g', 'eots')
         if ffmpeg_url:
-            full_file_name = 'ffmpeg-7.1.zip'
-            version = 'v7.1'
+            full_file_name = 'ffmpeg_latest_build_20250124.zip'
+            version = 'v20250124'
             zip_file_path = Path(execute_dir) / full_file_name
             if Path(zip_file_path).exists():
                 logger.debug("ffmpeg installation file already exists, start install...")
@@ -83,8 +84,7 @@ def install_ffmpeg_windows():
                             f.write(data)
 
             unzip_file(zip_file_path, execute_dir)
-            extract_dir_path = str(zip_file_path).rsplit('.', maxsplit=1)[0]
-            os.environ['PATH'] = execute_dir + '/' + extract_dir_path + os.pathsep + current_env_path
+            os.environ['PATH'] = ffmpeg_path + os.pathsep + current_env_path
             result = subprocess.run(["ffmpeg", "-version"], capture_output=True)
             if result.returncode == 0:
                 logger.debug('ffmpeg installation was successful')

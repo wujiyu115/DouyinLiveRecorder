@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from douyinliverecorder.logger import logger
-from douyinliverecorder import spider
+import asyncio
+from streamget.logger import logger
+from streamget import spider
 
 # 以下示例直播间链接不保证时效性，请自行查看链接是否能正常访问
-# Please note that the following example live room links may not be up-to-date;
+# Please note that the following example live room links may not be up-to-date
 LIVE_STREAM_CONFIG = {
     "douyin": {
         "url": "https://live.douyin.com/745964462470",
@@ -142,8 +143,8 @@ LIVE_STREAM_CONFIG = {
         "func": spider.get_haixiu_stream_url,
     },
     "vvxqiu": {
-        "url": "https://h5webcdn-pro.vvxqiu.com//activity/videoShare/videoShare.html?h5Server=https://h5p.vvxqiu.com"
-               "&roomId=LP115924473&platformId=vvstar",
+        "url": "https://h5webcdnp.vvxqiu.com//activity/videoShare/videoShare.html?h5Server=https://h5p.vvxqiu.com&"
+               "roomId=LP115664695&platformId=vvstar",
         "func": spider.get_vvxqiu_stream_url,
     },
     "17live": {
@@ -185,6 +186,10 @@ LIVE_STREAM_CONFIG = {
     "jd": {
         "url": "https://3.cn/28MLBy-E",
         "func": spider.get_jd_stream_url,
+    },
+    "faceit": {
+        "url": "https://www.faceit.com/zh/players/Compl1/stream",
+        "func": spider.get_faceit_stream_data,
     }
 }
 
@@ -193,7 +198,7 @@ def test_live_stream(platform_name: str, proxy_addr=None, cookies=None) -> None:
     if platform_name in LIVE_STREAM_CONFIG:
         config = LIVE_STREAM_CONFIG[platform_name]
         try:
-            stream_data = config['func'](config['url'], proxy_addr=proxy_addr, cookies=cookies)
+            stream_data = asyncio.run(config['func'](config['url'], proxy_addr=proxy_addr, cookies=cookies))
             logger.debug(f"Stream data for {platform_name}: {stream_data}")
         except Exception as e:
             logger.error(f"Error fetching stream data for {platform_name}: {e}")
