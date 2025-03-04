@@ -1121,7 +1121,7 @@ def start_record(url_data: tuple, count_variable: int = -1) -> None:
 
                                 recording.add(record_name)
                                 start_record_time = datetime.datetime.now()
-                                recording_time_list[record_name] = [start_record_time, record_quality_zh]
+                                recording_time_list[record_name] = [start_record_time, record_quality_zh, record_url]
                                 rec_info = f"\r{anchor_name} 准备开始录制视频: {full_path}"
                                 if show_url:
                                     re_plat = ('WinkTV', 'PandaTV', 'ShowRoom', 'CHZZK', 'Youtube')
@@ -1587,7 +1587,7 @@ def display_recording():
 
     # 遍历每个唯一的直播
     for live_stream in unique_recordings:
-        start_time, quality_attribute = recording_time_list[live_stream]
+        start_time, quality_attribute, record_url = recording_time_list[live_stream]
 
         # 计算已录制的时间
         recorded_duration = current_time - start_time
@@ -1600,6 +1600,7 @@ def display_recording():
             "stream": live_stream,
             "quality_attribute": quality_attribute,
             "duration": formatted_duration,
+            "record_url": record_url,
         }
 
         # 添加到总列表中
