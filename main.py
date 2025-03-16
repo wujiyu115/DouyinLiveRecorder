@@ -125,7 +125,8 @@ def display_info() -> None:
                 no_repeat_recording = list(set(recording))
                 print(f"正在录制{len(no_repeat_recording)}个直播: ")
                 for recording_live in no_repeat_recording:
-                    rt, qa, _ = recording_time_list[recording_live] have_record_time = now_time - rt
+                    rt, qa, record_url = recording_time_list[recording_live]
+                    have_record_time = now_time - rt
                     print(f"{recording_live}[{qa}] 正在录制中 {str(have_record_time).split('.')[0]}")
 
                 # print('\n本软件已运行：'+str(now_time - start_display_time).split('.')[0])
